@@ -1,0 +1,16 @@
+*** Using Compiler 'V6.22', folder: 'C:\Keil_v5\ARM\ARMCLANG\Bin'
+Build target 'STM32F405RG'
+../../.General/ymodem.cpp(132): error: cannot assign to non-static data member 'APP_startAddr' with const-qualified type 'const uint32_t' (aka 'const unsigned int')
+  132 |                                 APP_startAddr += packet_length;
+      |                                 ~~~~~~~~~~~~~ ^
+../../.General\task.h(33): note: non-static data member 'APP_startAddr' declared const here
+   33 |     const uint32_t APP_startAddr;
+      |     ~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+1 error generated.
+compiling ymodem.cpp...
+compiling task.cpp...
+compiling main.c...
+compiling local.cpp...
+"STM32F405RG\STM32F405RG.axf" - 1 Error(s), 0 Warning(s).
+Target not created.
+Build Time Elapsed:  00:00:01

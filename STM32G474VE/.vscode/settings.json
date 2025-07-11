@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "functional": "cpp",
+        "array": "cpp",
+        "optional": "cpp",
+        "stop_token": "cpp"
+    }
+}
