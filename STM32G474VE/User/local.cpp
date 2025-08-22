@@ -37,8 +37,19 @@ void Bootloader::indicator()
     NON_BLOCKING_Delay(&static_timeout, 500, [](){HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);} );
 }
 
+/**
+ * 第一次HAL_FLASH_OB_Launch()之后，Bootloader将毁坏，所以需要再次烧录。
+ */
 bool Bootloader::retainBootloaderCallback()
 {
+    if (FLASH->OPTR & FLASH_OPTR_DBANK) {
+        HAL_FLASH_Unlock();
+        HAL_FLASH_OB_Unlock();
+        HAL_FLASHEx_OB_DBankConfig(OB_DBANK_128_BITS);
+        HAL_Delay(100);
+        HAL_FLASH_OB_Launch();
+    }
+    
     // 看门狗复位，意味着APP卡死或者手动中止APP
     if (__HAL_RCC_GET_FLAG(RCC_FLAG_IWDGRST))
     {
