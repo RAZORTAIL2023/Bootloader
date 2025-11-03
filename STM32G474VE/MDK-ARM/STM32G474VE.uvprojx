@@ -330,7 +330,7 @@
             <uGnu>0</uGnu>
             <useXO>0</useXO>
             <v6Lang>3</v6Lang>
-            <v6LangP>3</v6LangP>
+            <v6LangP>8</v6LangP>
             <vShortEn>1</vShortEn>
             <vShortWch>1</vShortWch>
             <v6Lto>0</v6Lto>
@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32G474xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32G4xx_HAL_Driver/Inc;../Drivers/STM32G4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32G4xx/Include;../Drivers/CMSIS/Include;../../.General</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32G4xx_HAL_Driver/Inc;../Drivers/STM32G4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32G4xx/Include;../Drivers/CMSIS/Include;../../.General;../../.General/ymodem;../../.General/OTA;..\User</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -362,7 +362,7 @@
             </VariousControls>
           </Aads>
           <LDads>
-            <umfTarg>1</umfTarg>
+            <umfTarg>0</umfTarg>
             <Ropi>0</Ropi>
             <Rwpi>0</Rwpi>
             <noStLib>0</noStLib>
@@ -415,19 +415,116 @@
           <GroupName>Drivers/STM32G4xx_HAL_Driver</GroupName>
           <Files>
             <File>
-              <FileName>stm32g4xx_hal_pwr_ex.c</FileName>
+              <FileName>stm32g4xx_hal_crc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_pwr_ex.c</FilePath>
+              <FilePath>../Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_crc.c</FilePath>
+              <FileOption>
+                <CommonProperty>
+                  <UseCPPCompiler>2</UseCPPCompiler>
+                  <RVCTCodeConst>0</RVCTCodeConst>
+                  <RVCTZI>0</RVCTZI>
+                  <RVCTOtherData>0</RVCTOtherData>
+                  <ModuleSelection>0</ModuleSelection>
+                  <IncludeInBuild>1</IncludeInBuild>
+                  <AlwaysBuild>2</AlwaysBuild>
+                  <GenerateAssemblyFile>2</GenerateAssemblyFile>
+                  <AssembleAssemblyFile>2</AssembleAssemblyFile>
+                  <PublicsOnly>2</PublicsOnly>
+                  <StopOnExitCode>11</StopOnExitCode>
+                  <CustomArgument></CustomArgument>
+                  <IncludeLibraryModules></IncludeLibraryModules>
+                  <ComprImg>1</ComprImg>
+                </CommonProperty>
+                <FileArmAds>
+                  <Cads>
+                    <interw>2</interw>
+                    <Optim>0</Optim>
+                    <oTime>2</oTime>
+                    <SplitLS>2</SplitLS>
+                    <OneElfS>2</OneElfS>
+                    <Strict>2</Strict>
+                    <EnumInt>2</EnumInt>
+                    <PlainCh>2</PlainCh>
+                    <Ropi>2</Ropi>
+                    <Rwpi>2</Rwpi>
+                    <wLevel>0</wLevel>
+                    <uThumb>2</uThumb>
+                    <uSurpInc>2</uSurpInc>
+                    <uC99>2</uC99>
+                    <uGnu>2</uGnu>
+                    <useXO>2</useXO>
+                    <v6Lang>0</v6Lang>
+                    <v6LangP>0</v6LangP>
+                    <vShortEn>2</vShortEn>
+                    <vShortWch>2</vShortWch>
+                    <v6Lto>2</v6Lto>
+                    <v6WtE>2</v6WtE>
+                    <v6Rtti>2</v6Rtti>
+                    <VariousControls>
+                      <MiscControls></MiscControls>
+                      <Define></Define>
+                      <Undefine></Undefine>
+                      <IncludePath></IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
             <File>
-              <FileName>stm32g4xx_hal_uart.c</FileName>
+              <FileName>stm32g4xx_hal_crc_ex.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_uart.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32g4xx_hal_uart_ex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_uart_ex.c</FilePath>
+              <FilePath>../Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_crc_ex.c</FilePath>
+              <FileOption>
+                <CommonProperty>
+                  <UseCPPCompiler>2</UseCPPCompiler>
+                  <RVCTCodeConst>0</RVCTCodeConst>
+                  <RVCTZI>0</RVCTZI>
+                  <RVCTOtherData>0</RVCTOtherData>
+                  <ModuleSelection>0</ModuleSelection>
+                  <IncludeInBuild>1</IncludeInBuild>
+                  <AlwaysBuild>2</AlwaysBuild>
+                  <GenerateAssemblyFile>2</GenerateAssemblyFile>
+                  <AssembleAssemblyFile>2</AssembleAssemblyFile>
+                  <PublicsOnly>2</PublicsOnly>
+                  <StopOnExitCode>11</StopOnExitCode>
+                  <CustomArgument></CustomArgument>
+                  <IncludeLibraryModules></IncludeLibraryModules>
+                  <ComprImg>1</ComprImg>
+                </CommonProperty>
+                <FileArmAds>
+                  <Cads>
+                    <interw>2</interw>
+                    <Optim>0</Optim>
+                    <oTime>2</oTime>
+                    <SplitLS>2</SplitLS>
+                    <OneElfS>2</OneElfS>
+                    <Strict>2</Strict>
+                    <EnumInt>2</EnumInt>
+                    <PlainCh>2</PlainCh>
+                    <Ropi>2</Ropi>
+                    <Rwpi>2</Rwpi>
+                    <wLevel>0</wLevel>
+                    <uThumb>2</uThumb>
+                    <uSurpInc>2</uSurpInc>
+                    <uC99>2</uC99>
+                    <uGnu>2</uGnu>
+                    <useXO>2</useXO>
+                    <v6Lang>0</v6Lang>
+                    <v6LangP>0</v6LangP>
+                    <vShortEn>2</vShortEn>
+                    <vShortWch>2</vShortWch>
+                    <v6Lto>2</v6Lto>
+                    <v6WtE>2</v6WtE>
+                    <v6Rtti>2</v6Rtti>
+                    <VariousControls>
+                      <MiscControls></MiscControls>
+                      <Define></Define>
+                      <Undefine></Undefine>
+                      <IncludePath></IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
             <File>
               <FileName>stm32g4xx_hal.c</FileName>
@@ -485,9 +582,24 @@
               <FilePath>../Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_pwr.c</FilePath>
             </File>
             <File>
+              <FileName>stm32g4xx_hal_pwr_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_pwr_ex.c</FilePath>
+            </File>
+            <File>
               <FileName>stm32g4xx_hal_cortex.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_cortex.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32g4xx_hal_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32g4xx_hal_uart_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_uart_ex.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -502,8 +614,58 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>Ymodem</GroupName>
+          <Files>
+            <File>
+              <FileName>ymodem_callback.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\.General\ymodem\ymodem_callback.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>ymodem_hal.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\.General\ymodem\ymodem_hal.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>ymodem.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\.General\ymodem\ymodem.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>ymodem.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\.General\ymodem\ymodem.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>OTA</GroupName>
+          <Files>
+            <File>
+              <FileName>OTA_HAL.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\.General\OTA\OTA_HAL.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>OTA.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\.General\OTA\OTA.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>OTA.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\.General\OTA\OTA.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>General</GroupName>
           <Files>
+            <File>
+              <FileName>bootloader.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\.General\bootloader.h</FilePath>
+            </File>
             <File>
               <FileName>task.cpp</FileName>
               <FileType>8</FileType>
@@ -514,25 +676,35 @@
               <FileType>5</FileType>
               <FilePath>..\..\.General\task.h</FilePath>
             </File>
-            <File>
-              <FileName>ymodem.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\.General\ymodem.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>ymodem.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\.General\ymodem.h</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
           <GroupName>User</GroupName>
           <Files>
             <File>
+              <FileName>Indicator.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\User\Indicator.cpp</FilePath>
+            </File>
+            <File>
               <FileName>local.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\User\local.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>local.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\User\local.h</FilePath>
+            </File>
+            <File>
+              <FileName>Jump.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\User\Jump.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>Flash.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\User\Flash.cpp</FilePath>
             </File>
           </Files>
         </Group>

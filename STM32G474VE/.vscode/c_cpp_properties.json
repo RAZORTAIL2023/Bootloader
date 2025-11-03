@@ -3,7 +3,7 @@
         {
             "name": "STM32G474VE",
             "cStandard": "c99",
-            "cppStandard": "c++11",
+            "cppStandard": "c++17",
             "compilerArgs": [
                 "--target=arm-arm-none-eabi"
             ],
@@ -14,16 +14,24 @@
                 "C:/Keil_v5/ARM/ARMCLANG/include/arm_linux_compat",
                 "C:/Keil_v5/ARM/ARMCLANG/include/libcxx",
                 "C:/Arm/Packs/ARM/CMSIS/6.2.0/CMSIS/Core/Include",
+                "C:/Arm/Packs/ARM/CMSIS/6.2.0/CMSIS/RTOS2/Include",
+                "MDK-ARM/RTE/_STM32G474VE",
                 "Core/Inc",
                 "Drivers/STM32G4xx_HAL_Driver/Inc",
                 "Drivers/STM32G4xx_HAL_Driver/Inc/Legacy",
                 "Drivers/CMSIS/Device/ST/STM32G4xx/Include",
                 "Drivers/CMSIS/Include",
-                "d:/.Bootloader/.General"
+                "d:/.Bootloader/.General",
+                "d:/.Bootloader/.General/ymodem",
+                "d:/.Bootloader/.General/OTA",
+                "User"
             ],
             "defines": [
                 "USE_HAL_DRIVER",
                 "STM32G474xx",
+                "RTE_COMPONENTS_H",
+                "RTE_Compiler_IO_STDOUT",
+                "RTE_Compiler_IO_STDOUT_User",
                 "_RTE_",
                 "__alignof__(x)=",
                 "__asm(x)=",

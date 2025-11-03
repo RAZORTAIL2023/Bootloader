@@ -14,6 +14,8 @@
                 "C:/Keil_v5/ARM/ARMCLANG/include/arm_linux_compat",
                 "C:/Keil_v5/ARM/ARMCLANG/include/libcxx",
                 "C:/Arm/Packs/ARM/CMSIS/6.1.0/CMSIS/Core/Include",
+                "C:/Arm/Packs/ARM/CMSIS/6.1.0/CMSIS/RTOS2/Include",
+                "MDK-ARM/RTE/_STM32F405RG",
                 "Core/Inc",
                 "Drivers/STM32F4xx_HAL_Driver/Inc",
                 "Drivers/STM32F4xx_HAL_Driver/Inc/Legacy",
@@ -26,6 +28,9 @@
             "defines": [
                 "USE_HAL_DRIVER",
                 "STM32F405xx",
+                "RTE_COMPONENTS_H",
+                "RTE_Compiler_IO_STDOUT",
+                "RTE_Compiler_IO_STDOUT_User",
                 "_RTE_",
                 "__alignof__(x)=",
                 "__asm(x)=",
