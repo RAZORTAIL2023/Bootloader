@@ -110,16 +110,16 @@ bool OTA::CheckACK_StartDownloadMsg(const std::vector<uint8_t>& msg) {
     std::vector<uint8_t> NACK = {0xEE, 0xA6, 0x11, 0x81, 0xFF, 0xFC, 0xFF, 0xFF};
 
     if (msg.size()==8 && std::equal(msg.begin(), msg.end(), ACK.begin())) {
-        puts("[INFO] ACK_开始下载");
+        puts("[OTA][INFO] ACK_开始下载");
         return true;
     }
     
     if (std::equal(msg.begin(), msg.end(), NACK.begin())) {
-        puts("[ERROR] NACK_开始下载");
+        puts("[OTA][ERROR] NACK_开始下载");
         return false;
     }
     
-    printf("[ERROR] 未知消息: %s\n", __func__);
+    printf("[OTA][ERROR] 未知消息: %s\n", __func__);
     for (const auto& byte : msg) printf("%02X ", byte);
     puts("");
     return false;
@@ -131,21 +131,21 @@ bool OTA::CheckACK_DataMsg(const std::vector<uint8_t>& msg, uint8_t sn) {
     std::vector<uint8_t> NACK_2 = {0xEE, 0xA6, 0x22, 0x83, sn, 0xFF, 0xFC, 0xFF, 0xFF};
 
     if (msg.size()==9 && std::equal(msg.begin(), msg.begin()+4, ACK.begin())) {
-        // puts("[INFO] ACK_数据包");
+        // puts("[OTA][INFO] ACK_数据包");
         return true;
     }
 
     if (msg.size()==9 && std::equal(msg.begin(), msg.begin()+4, NACK_1.begin())) {
-        printf("[ERROR] NACK_SN_数据包, 包号: %u\n", sn);
+        printf("[OTA][ERROR] NACK_SN_数据包, 包号: %u\n", sn);
         return false;
     }
 
     if (msg.size()==9 && std::equal(msg.begin(), msg.begin()+4, NACK_2.begin())) {
-        printf("[ERROR] NACK_CHECKSUM_数据包, 包号: %u\n", sn);
+        printf("[OTA][ERROR] NACK_CHECKSUM_数据包, 包号: %u\n", sn);
         return false;
     }
 
-    printf("[ERROR] 未知消息: %s\n", __func__);
+    printf("[OTA][ERROR] 未知消息: %s\n", __func__);
     for (const auto& byte : msg) printf("%02X ", byte);
     puts("");
     return false;
@@ -155,11 +155,11 @@ bool OTA::CheckACK_StartUpdateMsg(const std::vector<uint8_t>& msg) {
     std::vector<uint8_t> ACK = {0xEE, 0xA6, 0x33, 0x80, 0xFF, 0xFC, 0xFF, 0xFF};
 
     if (msg.size()==8 && std::equal(msg.begin(), msg.end(), ACK.begin())) {
-        puts("[INFO] ACK_开始更新");
+        puts("[OTA][INFO] ACK_开始更新");
         return true;
     }
 
-    printf("[ERROR] 未知消息: %s\n", __func__);
+    printf("[OTA][ERROR] 未知消息: %s\n", __func__);
     for (const auto& byte : msg) printf("%02X ", byte);
     puts("");
     return false;
@@ -170,16 +170,16 @@ bool OTA::CheckACK_VerifyMsg(const std::vector<uint8_t>& msg) {
     std::vector<uint8_t> NACK = {0xEE, 0xA6, 0x55, 0x00, 0xFF, 0xFC, 0xFF, 0xFF};
 
     if (msg.size()==8 && std::equal(msg.begin(), msg.end(), ACK.begin())) {
-        puts("[INFO] ACK_文件校验");
+        puts("[OTA][INFO] ACK_文件校验");
         return true;
     }
 
     if (msg.size()==8 && std::equal(msg.begin(), msg.end(), NACK.begin())) {
-        puts("[EEROR] NACK_文件校验");
+        puts("[OTA][EEROR] NACK_文件校验");
         return false;
     }
 
-    printf("[ERROR] 未知消息: %s\n", __func__);
+    printf("[OTA][ERROR] 未知消息: %s\n", __func__);
     for (const auto& byte : msg) printf("%02X ", byte);
     puts("");
     return false;
@@ -190,16 +190,16 @@ bool OTA::CheckACK_UNZIPMsg(const std::vector<uint8_t>& msg) {
     std::vector<uint8_t> NACK = {0xEE, 0xA6, 0x66, 0x00, 0xFF, 0xFC, 0xFF, 0xFF};
 
     if (msg.size()==8 && std::equal(msg.begin(), msg.end(), ACK.begin())) {
-        puts("[INFO] ACK_文件解压");
+        puts("[OTA][INFO] ACK_文件解压");
         return true;
     }
 
     if (msg.size()==8 && std::equal(msg.begin(), msg.end(), NACK.begin())) {
-        puts("[EEROR] NACK_文件解压");
+        puts("[OTA][EEROR] NACK_文件解压");
         return false;
     }
 
-    printf("[ERROR] 未知消息: %s\n", __func__);
+    printf("[OTA][ERROR] 未知消息: %s\n", __func__);
     for (const auto& byte : msg) printf("%02X ", byte);
     puts("");
     return false;
@@ -235,7 +235,7 @@ bool OTA::transmit(const uint8_t sn, const uint8_t* pData, size_t len) {
     /* 接收设备回应 */
     std::vector<uint8_t> RecvMsg = HAL::Receive(9, 5000);
     if (!RecvMsg.empty() && CheckACK_DataMsg(RecvMsg, sn)) {
-        printf("[OTA][PROCESS] 数据包传输完成: 包号: %u, 长度: %u\n", sn, data.size());
+        printf("[OTA][INFO] 数据包传输完成: 包号: %u, 长度: %u\n", sn, data.size());
         return true;
     } else {
         puts("[OTA][ERROR] 数据包传输失败: 设备响应异常");

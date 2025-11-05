@@ -93,7 +93,7 @@ void Ymodem::HeaderPacketHandle() {
     iter += (sizeLen+1);
 
     if (logLevel >= LogLevel::Light) printf("[YMODEM][INFO] 文件名称: %s\n", Args.filename.c_str());
-    if (logLevel >= LogLevel::Light) printf("[YMODEM][INFO] 文件大小: %u字节\n", Args.filesize);
+    if (logLevel >= LogLevel::Light) printf("[YMODEM][INFO] 文件大小: %u bytes\n", Args.filesize);
 
     Callback::HeaderPacketCallback(Args.filename, Args.filesize);
 }
