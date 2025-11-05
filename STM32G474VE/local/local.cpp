@@ -11,3 +11,16 @@ Bootloader bootloader
     0x20000,    // BOOT大小
     0x40000     // APP大小
 );
+
+void Local::Init() {
+    HAL_UARTEx_ReceiveToIdle_DMA(&PC_huart, saveCmd.data.data(), sizeof(saveCmd.data)-1);
+    HAL_TIM_Base_Start_IT(&htim20);
+}
+
+void Local::Work() {
+    
+}
+
+void Local::IWDG_Refresh() {
+    HAL_IWDG_Refresh(&hiwdg);
+}

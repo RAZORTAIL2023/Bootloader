@@ -23,8 +23,7 @@ public:
     }
 
     bool IsJumpToAPP();
-    void JumpToApp();
-    void Indicator();
+    void JumpToAPP();
     bool FlashErase();
     bool FlashProgram(const uint32_t startAddr, const uint8_t* const pData, size_t size);
 

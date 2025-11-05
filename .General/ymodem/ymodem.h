@@ -25,6 +25,7 @@ public:
         static void HeaderPacketCallback(std::string filename, uint32_t filesize);
         static bool GetDataCallback(const uint8_t* data, size_t len, bool isLastPacket);
         static void CpltCallback();
+        static void ErrorCallback();
     };
 
 private:
@@ -68,11 +69,11 @@ private:
     void start() {
         reset();
         HAL::SendByte(C);
-        if (logLevel >= LogLevel::Light) puts("\n[YMODEM][INFO] 接收器启动. 请发送文件...");
+        if (logLevel >= LogLevel::Light) puts("[YMODEM][INFO] 接收器启动. 请发送文件...");
     }
 
     void end() {
-        if (logLevel >= LogLevel::Light) puts("\n[YMODEM][INFO] 接收器强制停止...");
+        if (logLevel >= LogLevel::Light) puts("[YMODEM][INFO] 接收器强制停止.");
         CurProcess = Process::END;
     }
 
@@ -118,10 +119,12 @@ private:
 
     void RecvFailHandle()  {
         if (++Args.totalErrors >= 5) {
-            if (logLevel >= LogLevel::Light) puts("\n[YMODEM][ERROR] 错误次数太多，传输失败");
+            if (logLevel >= LogLevel::Light) puts("\n[YMODEM][ERROR] 错误次数太多, 传输失败, 正在取消...");
             HAL::SendByte(CAN);
             HAL::SendByte(CAN);
             CurProcess = Process::END;
+            Callback::ErrorCallback();
+            if (logLevel >= LogLevel::Light) puts("[YMODEM][INFO] Ymodem已关闭.");
         }
     }
 };

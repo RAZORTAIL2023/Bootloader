@@ -1,14 +1,16 @@
 #include "task.h"
+#include "main.h"
 
 void task_run()
 {
-    if (bootloader.IsJumpToAPP()) bootloader.JumpToApp();
+    if (bootloader.IsJumpToAPP()) bootloader.JumpToAPP();
+    Local::Init();
+    puts("[BOOT][INFO] Bootloader启动");
 
-    puts("Bootloader running...");
-
-    while (true)
-    {
-        NON_BLOCKING_DELAY(500, []() { bootloader.Indicator(); });
+    while (true) {
+        Local::Indicator();
+        Local::Work();
         Ymodem::Work();
+        UARTCmdQueue_Work();
     }
 }

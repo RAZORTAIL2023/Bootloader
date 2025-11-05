@@ -60,6 +60,8 @@
         "utility": "cpp",
         "chrono": "cpp",
         "format": "cpp",
-        "__config": "cpp"
+        "__config": "cpp",
+        "map": "cpp",
+        "queue": "cpp"
     }
 }

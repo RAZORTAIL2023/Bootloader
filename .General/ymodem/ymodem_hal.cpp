@@ -18,13 +18,13 @@ void Ymodem::HAL::Init() {
     __HAL_UART_SEND_REQ(huartx, UART_TXDATA_FLUSH_REQUEST);
 
     auto logic_flash = []() {
-        printf("[USER][INFO] 开始擦除APP区域, 起始地址: 0x%08X, 大小: %u bytes\n", bootloader.APP.StartAddr, bootloader.APP.MAXSize);
+        printf("[BOOT][INFO] 开始擦除APP区域: 起始地址: 0x%08X 大小: 0x%X字节\n", bootloader.APP.StartAddr, bootloader.APP.MAXSize);
 
         if (!bootloader.FlashErase()) {
-            puts("[USER][ERROR] 擦除APP区域失败, 终止ymodem...");
+            puts("[BOOT][ERROR] 擦除APP区域失败, Ymodem已停止.");
             Ymodem::End();
         } else {
-            puts("[USER][INFO] 擦除APP区域成功");
+            puts("[BOOT][INFO] 擦除APP区域成功");
         }
     };
 

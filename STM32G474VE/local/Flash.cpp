@@ -21,7 +21,6 @@ static bool Erase_Core() {
 }
 
 bool Bootloader::FlashErase() {
-    puts("\n[Ymodem][INFO] Download start, Now Erase Flash...");
     HAL_Delay(500);
     uint32_t primask = __get_PRIMASK();
     __disable_irq();
@@ -29,7 +28,6 @@ bool Bootloader::FlashErase() {
     bool result = Erase_Core();
     HAL_FLASH_Lock();
     if (!primask) __enable_irq();
-    puts("[Ymodem][INFO] Flash Erase Finished.\n");
     return result;
 }
 

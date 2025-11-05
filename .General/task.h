@@ -5,6 +5,14 @@
 #include <functional>
 #include "bootloader.h"
 #include "ymodem.h"
+#include "Queue.h"
+
+namespace Local {
+    void Init();
+    void Indicator();
+    void Work();
+    void IWDG_Refresh();
+}
 
 void NON_BLOCKING_Delay(uint32_t* static_timeout, uint32_t time, const std::function<void(void)>& func);
 // 此宏不可在成员方法中调用，因为静态局部变量不属于独立对象

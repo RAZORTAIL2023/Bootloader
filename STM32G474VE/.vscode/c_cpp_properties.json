@@ -22,9 +22,10 @@
                 "Drivers/CMSIS/Device/ST/STM32G4xx/Include",
                 "Drivers/CMSIS/Include",
                 "d:/.Bootloader/.General",
-                "d:/.Bootloader/.General/ymodem",
+                "d:/.Bootloader/.General/Command",
                 "d:/.Bootloader/.General/OTA",
-                "User"
+                "d:/.Bootloader/.General/ymodem",
+                "local"
             ],
             "defines": [
                 "USE_HAL_DRIVER",
