@@ -362,7 +362,7 @@
             </VariousControls>
           </Aads>
           <LDads>
-            <umfTarg>0</umfTarg>
+            <umfTarg>1</umfTarg>
             <Ropi>0</Ropi>
             <Rwpi>0</Rwpi>
             <noStLib>0</noStLib>
@@ -371,7 +371,7 @@
             <TextAddressRange></TextAddressRange>
             <DataAddressRange></DataAddressRange>
             <pXoBase></pXoBase>
-            <ScatterFile>stm32g474xx_flash.sct</ScatterFile>
+            <ScatterFile></ScatterFile>
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
             <Misc></Misc>
@@ -868,6 +868,16 @@
               <FileName>task.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\.General\task.h</FilePath>
+            </File>
+            <File>
+              <FileName>Logger.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\.General\Logger.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>Logger.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\.General\Logger.h</FilePath>
             </File>
           </Files>
         </Group>
