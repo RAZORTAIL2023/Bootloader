@@ -171,7 +171,7 @@ void Ymodem::work()
                 if (logLevel >= LogLevel::FULL) log("[YMODEM][INFO] 已接收: %u/%u 字节\n", Args.receivedBytes, Args.filesize);
                 HAL::SendByte(ACK);
             } else {
-                log("[YMODEM][ERROR] 数据处理失败，包号: %u\n", Args.PN);
+                log("[YMODEM][ERROR] 数据处理失败, 包号: %u\n", Args.PN);
                 Args.PN_Prev--; // 接收失败，包号不前进
                 HAL::SendByte(NAK);
                 RecvFailHandle();

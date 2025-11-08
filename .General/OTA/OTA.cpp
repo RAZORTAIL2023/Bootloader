@@ -215,11 +215,8 @@ bool OTA::start(const uint32_t filesize) {
 
     HAL::Transmit(StartDownloadMsg);
     log("[OTA][INFO] 已发送开始下载消息, 等待设备响应...");
-
-    std::vector<uint8_t> RecvMsg = HAL::Receive(8, 2000);
-    bool result = CheckACK_StartDownloadMsg(RecvMsg);
-
-    if (result) {
+    std::vector<uint8_t> RecvMsg = HAL::Receive(8, 6000);
+    if (!RecvMsg.empty() && CheckACK_StartDownloadMsg(RecvMsg)) {
         log("[OTA][INFO] 开始下载: 设备响应正常");
         return true;
     } else {
@@ -234,7 +231,7 @@ bool OTA::transmit(const uint8_t sn, const uint8_t* pData, size_t len) {
     std::vector<uint8_t> DataMsg = Generate_DataMsg(data, sn);
     HAL::Transmit(DataMsg);
     /* 接收设备回应 */
-    std::vector<uint8_t> RecvMsg = HAL::Receive(9, 5000);
+    std::vector<uint8_t> RecvMsg = HAL::Receive(9, 8000);
     if (!RecvMsg.empty() && CheckACK_DataMsg(RecvMsg, sn)) {
         // log("[OTA][INFO] 数据包传输完成: 包号: %u, 长度: %u\n", sn, data.size());
         return true;
@@ -250,9 +247,7 @@ bool OTA::update() {
     HAL::Transmit(StartUpdateMsg);
     log("[OTA][INFO] 已生成并发送开始更新消息, 等待设备响应...");
     std::vector<uint8_t> RecvMsg = HAL::Receive(8, 5000);
-    bool result = CheckACK_StartUpdateMsg(RecvMsg);
-
-    if (result) {
+    if (!RecvMsg.empty() && CheckACK_StartUpdateMsg(RecvMsg)) {
         log("[OTA][INFO] 开始更新: 设备响应正常");
         return true;
     } else {

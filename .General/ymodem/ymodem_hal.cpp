@@ -7,19 +7,23 @@ extern CRC_HandleTypeDef  hcrc;
 #define huartx (&huart2)
 #define hcrcx  (hcrc)
 
-void Ymodem::HAL::Init() {
+bool Ymodem::HAL::Init() {
+    puts("[BOOT][INFO] Ymodem开始, 与PC的沟通已关闭");
+
     if (HAL_UART_AbortReceive(huartx) != HAL_OK) {
         if (huartx->hdmarx != nullptr) HAL_DMA_Abort(huartx->hdmarx);
         Ymodem::End();
         HAL_UARTEx_ReceiveToIdle_DMA(&PC_huart, saveCmd.data.data(), sizeof(saveCmd.data)-1);
-        log("[BOOT][ERROR] HAL_UART_AbortReceive失败, 重新打开串口空闲中断.");
+        puts("[BOOT][ERROR] HAL_UART_AbortReceive失败, 重新打开串口空闲中断.");
+        return false;
     }
-    __HAL_UART_DISABLE_IT(huartx, UART_IT_IDLE | UART_IT_RTO | UART_IT_RXNE | UART_IT_ERR);
-    __HAL_UART_CLEAR_FLAG(huartx, UART_CLEAR_IDLEF | UART_CLEAR_RTOF);
-    __HAL_UART_SEND_REQ(huartx, UART_RXDATA_FLUSH_REQUEST);
-    __HAL_UART_SEND_REQ(huartx, UART_TXDATA_FLUSH_REQUEST);
 
-    auto logic_flash = []() {
+    HAL_UART_DeInit(huartx);
+    HAL_UART_Init(huartx);
+
+    Logger::release();
+
+    if (CurMode == YmodemWorkMode::FlashProgramming) {
         log("[BOOT][INFO] 开始擦除APP区域: 起始地址: 0x%08X 大小: 0x%X字节\n", bootloader.APP.StartAddr, bootloader.APP.MAXSize);
 
         if (!bootloader.FlashErase()) {
@@ -28,17 +32,9 @@ void Ymodem::HAL::Init() {
         } else {
             log("[BOOT][INFO] 擦除APP区域成功");
         }
-    };
-
-    auto logic_OTA = []() {
-        /* DO NOTHING */
-    };
-
-    if (CurMode == YmodemWorkMode::FlashProgramming) {
-        logic_flash();
-    } else if (CurMode == YmodemWorkMode::OTAUpdate) {
-        logic_OTA();
     }
+
+    return true;
 }
 
 bool Ymodem::HAL::RecvByte(uint8_t* pData) {

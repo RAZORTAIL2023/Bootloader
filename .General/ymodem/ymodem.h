@@ -31,7 +31,7 @@ public:
 
     class HAL {
     public:
-        static void Init();
+        static bool Init();
         static bool RecvByte(uint8_t* pData);
         static void SendByte(uint8_t data);
         static bool RecvMultiByte(uint8_t* pData, uint16_t Size);
@@ -42,6 +42,7 @@ public:
     public:
         static void HeaderPacketCallback(std::string filename, uint32_t filesize);
         static bool GetDataCallback(const uint8_t* data, size_t len, bool isLastPacket);
+        static void EndCallback();
         static void CpltCallback();
         static void ErrorCallback();
     };
@@ -57,9 +58,9 @@ private:
     struct Args_structure {
         std::string filename;
         uint32_t filesize;
-        bool GetFirstEOT;
-        bool GetFirstCAN;
-        int  totalErrors;
+        bool GetFirstEOT = false;
+        bool GetFirstCAN = false;
+        int  totalErrors = 0;
         uint16_t processLen;
         uint32_t receivedBytes; // 已接收的数据字节数
         uint8_t  PN; // packet number
@@ -77,22 +78,24 @@ private:
         return Args.filesize - Args.receivedBytes;
     }
 
-    void reset() {
+    bool reset() {
         CurProcess = Process::NONESTART;
         Args.reset();
         packet.fill(0x00);
-        HAL::Init();
+        return HAL::Init();
     }
 
     void start() {
-        reset();
-        HAL::SendByte(C);
-        log("[YMODEM][INFO] 接收器启动. 请发送文件...");
+        if (reset() == true) {
+            HAL::SendByte(C);
+            log("[YMODEM][INFO] 接收器启动. 请发送文件...");
+        }
     }
 
     void end() {
-        CurProcess = Process::END;
         log("[YMODEM][INFO] 接收器强制停止.");
+        CurProcess = Process::END;
+        Callback::EndCallback();
     }
 
     bool LastPacketCheck() {
@@ -131,11 +134,14 @@ private:
             return RecvResult::NONE;
         } else {
             log("\n[YMODEM][WARN] 用户取消传输");
+            end();
             return RecvResult::TERMINATE;
         }
     }
 
     void RecvFailHandle()  {
+        log("[YMODEM][ERROR] 累计失败: %u/%u\n", Args.totalErrors+1, 5);
+
         if (++Args.totalErrors >= 5) {
             log("\n[YMODEM][ERROR] 错误次数太多, 传输失败, 正在取消...");
             HAL::SendByte(CAN);

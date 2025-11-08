@@ -17,7 +17,12 @@ private:
     static inline std::queue<std::pmr::string, std::pmr::deque<std::pmr::string>> logQueue{std::pmr::deque<std::pmr::string>{&poolEx}};
 
     static std::pmr::string construct(const char* format) {
-        return std::pmr::string{format, std::min(strlen(format), size_t{255}), &poolEx};
+        size_t len = std::min(strlen(format), size_t{254}); // strlen(format) + \n + \0 <= 256
+        std::pmr::string result(&poolEx);
+        result.reserve(len + 1); // 将\n预留
+        result.append(format, len);
+        result.push_back('\n');
+        return result;
     }
 
     template<typename... Args>
@@ -48,6 +53,11 @@ public:
         } else {
             return false;
         }
+    }
+
+    static void release() {
+        while (!logQueue.empty()) logQueue.pop();
+        poolEx.release();
     }
 
     static void printAll() {
