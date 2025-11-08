@@ -1,4 +1,5 @@
 #include "ymodem.h"
+#include "Logger.h"
 
 /**
  * @brief 接收数据包
@@ -27,14 +28,14 @@ Ymodem::RecvResult Ymodem::RecvPacket() {
     case STX: packetLen = 1024; break;
     case EOT: packetLen = 1; return EOT_Handle();
     case CAN: packetLen = 1; return CANCEL_Handle();
-    default: if (logLevel >= LogLevel::Light) printf("[YMODEM][ERROR] 未定义帧头: 0X%02X\n", packet[0]); return RecvResult::FAIL;
+    default: log("[YMODEM][ERROR] 未定义帧头: 0X%02X\n", packet[0]); return RecvResult::FAIL;
     }
 
     /* 接收剩余数据 */
     auto iter = packet.begin();
     auto TO_UINT8_PTR = [](decltype(iter) it) { return &*it; };
     if (HAL::RecvMultiByte(TO_UINT8_PTR(iter+1), 2+packetLen+2) != true) {
-        if (logLevel != LogLevel::None) printf("[YMODEM][ERROR] 数据包接收失败\n");
+        log("[YMODEM][ERROR] 数据包接收失败\n");
         return RecvResult::FAIL;
     }
 
@@ -42,14 +43,14 @@ Ymodem::RecvResult Ymodem::RecvPacket() {
     uint16_t compute_crc = HAL::CRC_Calculate(TO_UINT8_PTR(iter+3), packetLen);
     uint16_t receive_crc = (packet[2+packetLen+1]<<8) | packet[2+packetLen+2];
     if (compute_crc != receive_crc) {
-        if (logLevel != LogLevel::None) printf("[YMODEM][ERROR] CRC校验失败. 计算值: 0x%04X, 接收值: 0x%04X. \n", compute_crc, receive_crc);
+        log("[YMODEM][ERROR] CRC校验失败. 计算值: 0x%04X, 接收值: 0x%04X. \n", compute_crc, receive_crc);
         return RecvResult::FAIL;
     }
 
     /* 包号校验 */
     Args.PN  = *(iter+1);
     if ((Args.PN^0xFF) != *(iter+2)) {
-        if (logLevel != LogLevel::None) printf("[YMODEM][ERROR] 包号不匹配. 包号: %u, 包号反码: %u\n", Args.PN, *(iter+2));
+        log("[YMODEM][ERROR] 包号不匹配. 包号: %u, 包号反码: %u\n", Args.PN, *(iter+2));
         return RecvResult::FAIL;
     }
 
@@ -61,17 +62,17 @@ Ymodem::RecvResult Ymodem::RecvPacket() {
         return CurProcess == Process::Recv_PacketTailer ? true : Args.PN == (uint8_t)(Args.PN_Prev + 1);
     };
     if (isPNRepeated()){
-        if (logLevel >= LogLevel::Full) printf("[YMODEM][WARN] 重复包号: %u\n", Args.PN);
+        if (logLevel == LogLevel::FULL) log("[YMODEM][WARN] 重复包号: %u\n", Args.PN);
         return RecvResult::DUPLICATE;
     }
     if (!isPNContinuous()) {
-        if (logLevel != LogLevel::None) printf("[YMODEM][ERROR] 包号不连续. 上一个包号: %u, 当前包号: %u\n", Args.PN_Prev, Args.PN);
+        log("[YMODEM][ERROR] 包号不连续. 上一个包号: %u, 当前包号: %u\n", Args.PN_Prev, Args.PN);
         return RecvResult::FAIL;
     }
 
     /* 接收完成 */
     Args.PN_Prev = Args.PN;
-    if (logLevel >= LogLevel::Full) printf("[YMODEM][INFO] 收到数据包，包号: %u, 长度: %u\n", Args.PN, packetLen);
+    if (logLevel == LogLevel::FULL) log("[YMODEM][INFO] 收到数据包，包号: %u, 长度: %u\n", Args.PN, packetLen);
     return RecvResult::RIGHT;
 }
 
@@ -92,8 +93,8 @@ void Ymodem::HeaderPacketHandle() {
     Args.filesize = std::stoul(std::string((const char*)(&*iter), sizeLen));
     iter += (sizeLen+1);
 
-    if (logLevel >= LogLevel::Light) printf("[YMODEM][INFO] 文件名称: %s\n", Args.filename.c_str());
-    if (logLevel >= LogLevel::Light) printf("[YMODEM][INFO] 文件大小: %u bytes\n", Args.filesize);
+    log("[YMODEM][INFO] 文件名称: %s\n", Args.filename.c_str());
+    log("[YMODEM][INFO] 文件大小: %u bytes\n", Args.filesize);
 
     Callback::HeaderPacketCallback(Args.filename, Args.filesize);
 }
@@ -110,17 +111,17 @@ Ymodem::Process Ymodem::RecvParse() {
         // 包号反码已经验过
         bool isValid = (packetLen==128 && Args.PN==0x00 && packet[3]==0x00);
         if (!isValid) {
-            if (logLevel >= LogLevel::Light) printf("[YMODEM][ERROR] 结束帧无效, 包号: %u, 长度: %u, 数据区首字节: 0x%02X\n", Args.PN, packetLen, packet[3]);
+            log("[YMODEM][ERROR] 结束帧无效, 包号: %u, 长度: %u, 数据区首字节: 0x%02X\n", Args.PN, packetLen, packet[3]);
             return Process::END;
         }
         // 进一步检查数据区是否全为0x00(仅警告)
         for (int i=0; i<128; i++) {
             if (packet[3+i] != 0x00) {
-                if (logLevel >= LogLevel::Light) printf("[YMODEM][WARN] 结束帧数据区非空, 位置: %d, 值: 0x%02X\n", i, packet[3+i]);
+                log("[YMODEM][WARN] 结束帧数据区非空, 位置: %d, 值: 0x%02X\n", i, packet[3+i]);
                 break;
             }
         }
-        puts("[YMODEM][INFO] 收到结束帧");
+        log("[YMODEM][INFO] 收到结束帧");
         return Process::END;
     }
 
@@ -133,7 +134,7 @@ Ymodem::Process Ymodem::RecvParse() {
     if (CurProcess != Process::NONESTART) {
         return Process::Recv_Data;
     } else {
-        if (logLevel >= LogLevel::None) printf("[YMODEM][ERROR] 无起始帧的数据帧, 包号: %u, 长度: %u\n", Args.PN, packetLen);
+        log("[YMODEM][ERROR] 无起始帧的数据帧, 包号: %u, 长度: %u\n", Args.PN, packetLen);
         return Process::END;
     }
 }
@@ -153,9 +154,9 @@ void Ymodem::work()
     // 对EOT/CANCEL帧透明
     switch (CurProcess = RecvParse()) {
     case Process::Recv_PacketHeader:
-        if (logLevel >= LogLevel::Light) printf("[YMODEM][INFO] 收到起始帧, 正在解析...\n");
+        log("[YMODEM][INFO] 收到起始帧, 正在解析...\n");
         HeaderPacketHandle();
-        if (logLevel >= LogLevel::Light) puts("[YMODEM][INFO] 解析完毕, 正在请求数据帧...");
+        log("[YMODEM][INFO] 解析完毕, 正在请求数据帧...");
         CurProcess = Process::Recv_Data;
         HAL::SendByte(ACK);
         HAL::SendByte(C);
@@ -167,10 +168,10 @@ void Ymodem::work()
             Args.processLen = isLastPacket ? remain() : packetLen;
             if (Callback::GetDataCallback(packet.data()+3, Args.processLen, isLastPacket) == true) {
                 Args.receivedBytes += Args.processLen;
-                if (logLevel >= LogLevel::Full) printf("[YMODEM][INFO] 已接收: %u/%u 字节\n", Args.receivedBytes, Args.filesize);
+                if (logLevel >= LogLevel::FULL) log("[YMODEM][INFO] 已接收: %u/%u 字节\n", Args.receivedBytes, Args.filesize);
                 HAL::SendByte(ACK);
             } else {
-                if (logLevel >= LogLevel::Light) printf("[YMODEM][ERROR] 数据处理失败，包号: %u\n", Args.PN);
+                log("[YMODEM][ERROR] 数据处理失败，包号: %u\n", Args.PN);
                 Args.PN_Prev--; // 接收失败，包号不前进
                 HAL::SendByte(NAK);
                 RecvFailHandle();
@@ -179,7 +180,7 @@ void Ymodem::work()
         break;
 
     case Process::END:
-        puts("[YMODEM][INFO] 传输结束");
+        log("[YMODEM][INFO] 传输结束");
         HAL::SendByte(ACK);
         Callback::CpltCallback();
         break;

@@ -6,6 +6,7 @@
 #include "bootloader.h"
 #include "ymodem.h"
 #include "Queue.h"
+#include "Logger.h"
 
 namespace Local {
     void Init();

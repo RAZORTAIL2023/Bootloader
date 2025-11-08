@@ -5,19 +5,17 @@
 static uint32_t flash_destination;
 
 void Ymodem::Callback::HeaderPacketCallback(std::string filename, uint32_t filesize) {
-
-    // 此函数是静态函数, 所以可以使用static变量
-
+    
     static auto logic_flash = []() {
         flash_destination = bootloader.APP.StartAddr;
     };
 
     static auto logic_OTA = [&filesize]() {
         if (!OTA::start(filesize)) {
-            puts("[BOOT][ERROR] OTA启动失败, 终止ymodem...");
+            log("[BOOT][ERROR] OTA启动失败, 终止ymodem...");
             Ymodem::End();
         } else {
-            puts("[BOOT][INFO] OTA启动成功, 等待数据传输...");
+            log("[BOOT][INFO] OTA启动成功, 等待数据传输...");
         }
     };
 
@@ -30,15 +28,13 @@ void Ymodem::Callback::HeaderPacketCallback(std::string filename, uint32_t files
 
 bool Ymodem::Callback::GetDataCallback(const uint8_t* pData, size_t len, bool isLastPacket) {
 
-    // 此函数是静态函数, 所以可以使用static变量
-
     static auto logic_flash = [&pData, &len, &isLastPacket]() {
         static uint32_t flash_destination = bootloader.APP.StartAddr;
         if (bootloader.FlashProgram(flash_destination, pData, len) == true) {
             flash_destination += len;
             return true;
         } else {
-            printf("[BOOT][ERROR] %s: Flash编程失败, 地址: 0x%08X, 长度: %u\n", __func__, flash_destination, len);
+            log("[BOOT][ERROR] %s: Flash编程失败, 地址: 0x%08X, 长度: %u\n", __func__, flash_destination, len);
             return false;
         }
     };
@@ -55,7 +51,7 @@ bool Ymodem::Callback::GetDataCallback(const uint8_t* pData, size_t len, bool is
         };
 
         if (!isLastPacket) {
-            if (len != 1024) {printf("[BOOT][ERROR] %s: 异常数据长度: %u\n", __func__, len); return false;}
+            if (len != 1024) {log("[BOOT][ERROR] %s: 异常数据长度: %u\n", __func__, len); return false;}
             if (!CopyAndTransmit(pData, 512)) return false;
             if (!CopyAndTransmit(pData+512, 512)) return false;
             return true;
@@ -80,42 +76,25 @@ bool Ymodem::Callback::GetDataCallback(const uint8_t* pData, size_t len, bool is
 }
 
 void Ymodem::Callback::CpltCallback() {
-    static auto logic_flash = []() {
-        HAL_UARTEx_ReceiveToIdle_DMA(&PC_huart, saveCmd.data.data(), sizeof(saveCmd.data)-1);
-        puts("[BOOT][INFO] Flash编程完成, 重新打开串口空闲中断.");
-    };
-
-    static auto logic_OTA = []() {
+    if (CurMode == YmodemWorkMode::OTAUpdate) {
         bool result = OTA::update();
-        if (!result) {puts("[BOOT][ERROR] OTA更新失败"); return;}
+        if (!result) {log("[BOOT][ERROR] OTA更新失败"); return;}
         result = OTA::verify();
-        if (!result) {puts("[BOOT][ERROR] OTA验证失败"); return;}
+        if (!result) {log("[BOOT][ERROR] OTA验证失败"); return;}
         result = OTA::unzip();
-        if (!result) {puts("[BOOT][ERROR] OTA解压失败"); return;}
-
-        puts("[BOOT][INFO] OTA流程结束");
-    };
-
-    if (CurMode == YmodemWorkMode::FlashProgramming) {
-        logic_flash();
-    } else if (CurMode == YmodemWorkMode::OTAUpdate) {
-        logic_OTA();
+        if (!result) {log("[BOOT][ERROR] OTA解压失败"); return;}
+        log("[BOOT][INFO] OTA流程结束");
     }
+
+    HAL_UARTEx_ReceiveToIdle_DMA(&PC_huart, saveCmd.data.data(), sizeof(saveCmd.data)-1);
+    log("[BOOT][INFO] Ymodem完成, 重新打开串口空闲中断.");
+    log("[BOOT][INFO] 现在打印所有Ymodem传输日志:");
+    Logger::printAll();
 }
 
 void Ymodem::Callback::ErrorCallback() {
-    static auto logic_flash = []() {
-        HAL_UARTEx_ReceiveToIdle_DMA(&PC_huart, saveCmd.data.data(), sizeof(saveCmd.data)-1);
-        puts("[BOOT][ERROR] Flash编程失败, 重新打开串口空闲中断.");
-    };
-
-    static auto logic_OTA = []() {
-        /* DO NOTHING */
-    };
-
-    if (CurMode == YmodemWorkMode::FlashProgramming) {
-        logic_flash();
-    } else if (CurMode == YmodemWorkMode::OTAUpdate) {
-        logic_OTA();
-    }
+    HAL_UARTEx_ReceiveToIdle_DMA(&PC_huart, saveCmd.data.data(), sizeof(saveCmd.data)-1);
+    log("[BOOT][INFO] Ymodem完成, 重新打开串口空闲中断.");
+    log("[BOOT][INFO] 现在打印所有Ymodem传输日志:");
+    Logger::printAll();
 }

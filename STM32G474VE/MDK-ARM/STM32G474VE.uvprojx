@@ -879,6 +879,11 @@
               <FileType>5</FileType>
               <FilePath>..\..\.General\Logger.h</FilePath>
             </File>
+            <File>
+              <FileName>monotonic_buffer_resource_ex.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\.General\monotonic_buffer_resource_ex.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

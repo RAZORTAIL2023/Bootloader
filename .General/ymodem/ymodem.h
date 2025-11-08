@@ -3,13 +3,31 @@
 #include <cstdint>
 #include <array>
 #include <string>
+#include <functional>
+#include "Logger.h"
 
 class Ymodem {
 public:
     static void Work()  { GetInstance()->work(); }
     static void Start() { GetInstance()->start(); }
     static void End()   { GetInstance()->end(); }
-    enum class LogLevel { None, Light, Full } logLevel = LogLevel::Full;
+    enum class LogLevel { NONE, LIGHT,  FULL } static constexpr logLevel = LogLevel::LIGHT;
+    enum class LogMode  { NONE, PRINTF, USER } static inline    logMode  = LogMode::PRINTF;
+
+    template<typename... Args>
+    static bool log(const char* format, Args... args) {
+        if constexpr (logLevel == LogLevel::NONE) return true;
+
+        if (logMode == LogMode::PRINTF) {
+            if constexpr (sizeof...(args) == 0) puts(format);
+            else printf(format, args...);
+            return true;
+        } else if (logMode == LogMode::USER) {
+            return Logger::push_back<Args...>(format, args...);
+        } else {
+            return true;
+        }
+    };
 
     class HAL {
     public:
@@ -60,21 +78,21 @@ private:
     }
 
     void reset() {
-        HAL::Init();
+        CurProcess = Process::NONESTART;
         Args.reset();
         packet.fill(0x00);
-        CurProcess = Process::NONESTART;
+        HAL::Init();
     }
 
     void start() {
         reset();
         HAL::SendByte(C);
-        if (logLevel >= LogLevel::Light) puts("[YMODEM][INFO] 接收器启动. 请发送文件...");
+        log("[YMODEM][INFO] 接收器启动. 请发送文件...");
     }
 
     void end() {
-        if (logLevel >= LogLevel::Light) puts("[YMODEM][INFO] 接收器强制停止.");
         CurProcess = Process::END;
+        log("[YMODEM][INFO] 接收器强制停止.");
     }
 
     bool LastPacketCheck() {
@@ -83,10 +101,10 @@ private:
         bool result = (remainBytes < packetLen) && (remainBytes != 0);
         
         if (result) {
-            if (logLevel >= LogLevel::Light) printf("[YMODEM][INFO] 最后一个数据包，实际长度: %u\n", remainBytes);
+            log("[YMODEM][INFO] 最后一个数据包，实际长度: %u\n", remainBytes);
 
             if (packet[3+remainBytes] != 0x1A) {
-                if (logLevel >= LogLevel::Light) printf("[YMODEM][WARN] 填充字节不是0x1A, 位置: %u, 值: 0x%02X\n", remainBytes, packet[3+remainBytes]);
+                log("[YMODEM][WARN] 填充字节不是0x1A, 位置: %u, 值: 0x%02X\n", remainBytes, packet[3+remainBytes]);
             }
         }
 
@@ -99,7 +117,7 @@ private:
             HAL::SendByte(NAK);
             return RecvResult::NONE;
         } else {
-            if (logLevel >= LogLevel::Light) puts("\n[YMODEM][INFO] 收到EOT, 正在请求结束帧...");
+            log("\n[YMODEM][INFO] 收到EOT, 正在请求结束帧...");
             HAL::SendByte(ACK);
             HAL::SendByte(C);
             CurProcess = Process::Recv_PacketTailer;
@@ -112,19 +130,19 @@ private:
             Args.GetFirstCAN = true;
             return RecvResult::NONE;
         } else {
-            if (logLevel >= LogLevel::Light) puts("\n[YMODEM][WARN] 用户取消传输");
+            log("\n[YMODEM][WARN] 用户取消传输");
             return RecvResult::TERMINATE;
         }
     }
 
     void RecvFailHandle()  {
         if (++Args.totalErrors >= 5) {
-            if (logLevel >= LogLevel::Light) puts("\n[YMODEM][ERROR] 错误次数太多, 传输失败, 正在取消...");
+            log("\n[YMODEM][ERROR] 错误次数太多, 传输失败, 正在取消...");
             HAL::SendByte(CAN);
             HAL::SendByte(CAN);
             CurProcess = Process::END;
+            log("[YMODEM][INFO] Ymodem已关闭.");
             Callback::ErrorCallback();
-            if (logLevel >= LogLevel::Light) puts("[YMODEM][INFO] Ymodem已关闭.");
         }
     }
 };

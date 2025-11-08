@@ -62,6 +62,12 @@
         "format": "cpp",
         "__config": "cpp",
         "map": "cpp",
-        "queue": "cpp"
+        "queue": "cpp",
+        "span": "cpp",
+        "ranges": "cpp",
+        "deque": "cpp",
+        "stack": "cpp",
+        "__tree": "cpp",
+        "bitset": "cpp"
     }
 }

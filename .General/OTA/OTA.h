@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <vector>
 #include <string_view>
+#include "Logger.h"
 
 class OTA {
 public:
@@ -11,7 +12,6 @@ public:
     static bool update();
     static bool verify();
     static bool unzip();
-    enum class LogLevel { None, Light, Full } static inline logLevel = LogLevel::Full;
 
 private:
     static constexpr std::string_view filename = "ota.bin";
@@ -31,5 +31,18 @@ private:
     public:
         static std::vector<uint8_t> Receive(uint8_t Size, uint32_t timeout_ms);
         static void Transmit(std::vector<uint8_t>& msg);
+    };
+
+    template<typename... Args>
+    static bool log(const char* format, Args... args) {
+#if 0
+        if constexpr (sizeof...(args) == 0) puts(format);
+        else printf(format, args...);
+        return true;
+#elif 1
+        return Logger::push_back<Args...>(format, args...);
+#else
+        return true;
+#endif
     };
 };
