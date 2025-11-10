@@ -16,6 +16,7 @@ void Ymodem::Callback::HeaderPacketCallback(std::string filename, uint32_t files
             Ymodem::End();
         } else {
             log("[BOOT][INFO] OTA启动成功, 等待数据传输...");
+            HAL_Delay(1000);
         }
     };
 

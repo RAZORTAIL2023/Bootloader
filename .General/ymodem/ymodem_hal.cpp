@@ -4,22 +4,41 @@
 
 extern UART_HandleTypeDef huart2;
 extern CRC_HandleTypeDef  hcrc;
-#define huartx (&huart2)
+#define huartx (huart2)
 #define hcrcx  (hcrc)
 
 bool Ymodem::HAL::Init() {
     puts("[BOOT][INFO] Ymodem开始, 与PC的沟通已关闭");
 
-    if (HAL_UART_AbortReceive(huartx) != HAL_OK) {
-        if (huartx->hdmarx != nullptr) HAL_DMA_Abort(huartx->hdmarx);
-        Ymodem::End();
-        HAL_UARTEx_ReceiveToIdle_DMA(&PC_huart, saveCmd.data.data(), sizeof(saveCmd.data)-1);
-        puts("[BOOT][ERROR] HAL_UART_AbortReceive失败, 重新打开串口空闲中断.");
-        return false;
+    if (huartx.hdmarx != nullptr)  HAL_DMA_Abort(huartx.hdmarx);
+    HAL_UART_AbortReceive(&huartx);
+    uint32_t timeout = HAL_GetTick() + 100;
+    while (huartx.RxState != HAL_UART_STATE_READY) {
+        if (HAL_GetTick() > timeout) {
+            puts("[BOOT][ERROR] UART状态超时");
+            return false;
+        }
     }
-
-    HAL_UART_DeInit(huartx);
-    HAL_UART_Init(huartx);
+    __HAL_UART_DISABLE(&huartx);
+    __HAL_UART_CLEAR_FLAG(&huartx, UART_CLEAR_PEF | UART_CLEAR_FEF | UART_CLEAR_NEF | UART_CLEAR_OREF | UART_CLEAR_IDLEF);
+    CLEAR_BIT(huartx.Instance->CR1, USART_CR1_PEIE | USART_CR1_TXEIE_TXFNFIE | USART_CR1_TCIE | USART_CR1_RXNEIE_RXFNEIE | USART_CR1_IDLEIE);
+    CLEAR_BIT(huartx.Instance->CR3, USART_CR3_EIE | USART_CR3_RXFTIE | USART_CR3_TXFTIE);
+    CLEAR_BIT(huartx.Instance->CR3, USART_CR3_DMAR | USART_CR3_DMAT);
+    __HAL_UART_SEND_REQ(&huartx, UART_RXDATA_FLUSH_REQUEST);
+    __HAL_UART_SEND_REQ(&huartx, UART_TXDATA_FLUSH_REQUEST);
+    HAL_Delay(1);
+    __HAL_UART_ENABLE(&huartx);
+    timeout = HAL_GetTick() + 100;
+    while (!(__HAL_UART_GET_FLAG(&huartx, UART_FLAG_REACK))) {
+        if (HAL_GetTick() > timeout) {
+            puts("[BOOT][ERROR] UART REACK超时");
+            return false;
+        }
+    }
+    huartx.gState = HAL_UART_STATE_READY;
+    huartx.RxState = HAL_UART_STATE_READY;
+    huartx.ErrorCode = HAL_UART_ERROR_NONE;
+    huartx.ReceptionType = HAL_UART_RECEPTION_STANDARD;
 
     Logger::release();
 
@@ -38,15 +57,20 @@ bool Ymodem::HAL::Init() {
 }
 
 bool Ymodem::HAL::RecvByte(uint8_t* pData) {
-    return HAL_UART_Receive(huartx, pData, 1, 2000) == HAL_OK;
+    return HAL_UART_Receive(&huartx, pData, 1, 2000) == HAL_OK;
 }
 
 void Ymodem::HAL::SendByte(uint8_t data) {
-    HAL_UART_Transmit(huartx, &data, 1, HAL_MAX_DELAY);
+    HAL_UART_Transmit(&huartx, &data, 1, HAL_MAX_DELAY);
 }
 
 bool Ymodem::HAL::RecvMultiByte(uint8_t* pData, uint16_t Size) {
-    return HAL_UART_Receive(huartx, pData, Size, 5000) == HAL_OK;
+    return HAL_UART_Receive(&huartx, pData, Size, 5000) == HAL_OK;
+}
+
+uint32_t Ymodem::HAL::EOT_Delay() {
+    HAL_Delay(1000); // 防止NAK回复过快
+    return 1000;
 }
 
 uint16_t Ymodem::HAL::CRC_Calculate(const uint8_t* pData, uint32_t Size) {

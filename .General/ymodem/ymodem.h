@@ -11,6 +11,7 @@ public:
     static void Work()  { GetInstance()->work(); }
     static void Start() { GetInstance()->start(); }
     static void End()   { GetInstance()->end(); }
+    
     enum class LogLevel { NONE, LIGHT,  FULL } static constexpr logLevel = LogLevel::LIGHT;
     enum class LogMode  { NONE, PRINTF, USER } static inline    logMode  = LogMode::PRINTF;
 
@@ -35,6 +36,7 @@ public:
         static bool RecvByte(uint8_t* pData);
         static void SendByte(uint8_t data);
         static bool RecvMultiByte(uint8_t* pData, uint16_t Size);
+        static uint32_t EOT_Delay(); // 防止NAK回复过快
         static uint16_t CRC_Calculate(const uint8_t* pData, uint32_t Size);
     };
 
@@ -50,7 +52,7 @@ public:
 private:
     static constexpr uint8_t SOH=0x01, STX=0x02, EOT=0x04, ACK=0x06, NAK=0x15, CAN=0x18, C=0x43;
     enum class Process { NONESTART, Recv_PacketHeader, Recv_Data, Recv_PacketTailer, END } CurProcess = Process::END;;
-    enum class RecvResult { NONE, RIGHT, DUPLICATE, FAIL, TERMINATE };
+    enum class RecvResult { NONE, RIGHT, DUPLICATE, FAIL };
     
     std::array<uint8_t, 1029> packet;
     uint16_t packetLen;
@@ -62,9 +64,10 @@ private:
         bool GetFirstCAN = false;
         int  totalErrors = 0;
         uint16_t processLen;
-        uint32_t receivedBytes; // 已接收的数据字节数
+        uint32_t receivedBytes;
         uint8_t  PN; // packet number
-        uint8_t  PN_Prev = 0xFF; // 必须初始化为0xFF，防止第一个包号为0时误判为重复包
+        uint8_t  PN_Prev = 0xFF;
+        bool isLastPacket = false;
         void reset() { *this = Args_structure(); }
     } Args;
 
@@ -114,9 +117,26 @@ private:
         return result;
     }
 
+    bool PacketTailerCheck() {
+        if (packetLen==128 && Args.PN==0x00 && packet[3]==0x00) {
+            // 检查数据区是否全为0x00(仅警告)
+            for (int i=0; i<128; i++) {
+                if (packet[3+i] != 0x00) {
+                    log("[YMODEM][WARN] 结束帧数据区非空, 位置: %d, 值: 0x%02X\n", i, packet[3+i]);
+                    break;
+                }
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     RecvResult EOT_Handle() {
         if (Args.GetFirstEOT == false) {
             Args.GetFirstEOT = true;
+            uint32_t ms = HAL::EOT_Delay();
+            if (ms > 0) log("[YMODEM][INFO] 第一个EOT回复延时 %u ms\n", ms);
             HAL::SendByte(NAK);
             return RecvResult::NONE;
         } else {
@@ -135,7 +155,7 @@ private:
         } else {
             log("\n[YMODEM][WARN] 用户取消传输");
             end();
-            return RecvResult::TERMINATE;
+            return RecvResult::NONE;
         }
     }
 
