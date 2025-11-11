@@ -11,6 +11,7 @@ std::map<std::string_view, std::function<int(int)>> Cmd_MAIN_Map = {
     {"GET", Cmd_MAIN_Functions::GET},
     {"YMODEM", Cmd_MAIN_Functions::YMODEM},
     {"JUMP", Cmd_MAIN_Functions::JUMP},
+    {"PRINT", Cmd_MAIN_Functions::PRINT},
 };
 
 std::map<std::string_view, std::function<int(int)>> Cmd_GET_Map = {

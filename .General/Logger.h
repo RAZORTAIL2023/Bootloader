@@ -60,6 +60,10 @@ public:
         poolEx.release();
     }
 
+    static bool empty() {
+        return logQueue.empty();
+    }
+
     static void printAll() {
         while (!logQueue.empty()) {
             const auto& str = logQueue.front();

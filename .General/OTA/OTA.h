@@ -35,7 +35,7 @@ private:
 
     template<typename... Args>
     static bool log(const char* format, Args... args) {
-#if 1
+#if 0
         if constexpr (sizeof...(args) == 0) puts(format);
         else printf(format, args...);
         return true;

@@ -9,8 +9,8 @@ void NON_BLOCKING_Delay(uint32_t* static_timestamp, uint32_t time, const std::fu
 
 extern "C" int stdout_putchar(int ch)
 {
-    while ((LOG_huart.Instance->ISR & 0x40) == 0);
-    LOG_huart.Instance->TDR = (uint8_t)ch;
+    while ((PC_huart.Instance->ISR & 0x40) == 0);
+    PC_huart.Instance->TDR = (uint8_t)ch;
     return ch;
 }
 

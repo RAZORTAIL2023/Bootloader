@@ -13,7 +13,7 @@ public:
     static void End()   { GetInstance()->end(); }
     
     enum class LogLevel { NONE, LIGHT,  FULL } static constexpr logLevel = LogLevel::LIGHT;
-    enum class LogMode  { NONE, PRINTF, USER } static inline    logMode  = LogMode::PRINTF;
+    enum class LogMode  { NONE, PRINTF, USER } static inline    logMode  = LogMode::USER;
 
     template<typename... Args>
     static bool log(const char* format, Args... args) {
@@ -92,6 +92,9 @@ private:
         if (reset() == true) {
             HAL::SendByte(C);
             log("[YMODEM][INFO] 接收器启动. 请发送文件...");
+        } else {
+            log("[YMODEM][INFO] 硬件初始化失败, 接收器无法启动");
+            end();
         }
     }
 
@@ -141,6 +144,8 @@ private:
             return RecvResult::NONE;
         } else {
             log("\n[YMODEM][INFO] 收到EOT, 正在请求结束帧...");
+            uint32_t ms = HAL::EOT_Delay();
+            if (ms > 0) log("[YMODEM][INFO] 第二个EOT回复延时 %u ms\n", ms);
             HAL::SendByte(ACK);
             HAL::SendByte(C);
             CurProcess = Process::Recv_PacketTailer;

@@ -37,6 +37,16 @@ namespace Cmd_MAIN_Functions {
         bootloader.JumpToAPP();
         return 1;
     }
+
+    int PRINT(int) {
+        if (Logger::empty()) {
+            puts("[BOOT][INFO] 没有存储的日志");   
+        } else {
+            puts("[BOOT][INFO] 现在打印所有存储日志:");
+            Logger::printAll();
+        }
+        return 1;
+    }
 }
 
 namespace Cmd_GET_Functions {
@@ -63,20 +73,20 @@ namespace Cmd_YMODEM_Functions {
 
     int UPDATE(int) {
         CurMode = YmodemWorkMode::FlashProgramming;
-        puts("[BOOT][INFO] 在线升级模式已启用.");
+        puts("[BOOT][INFO] 在线升级模式已启用");
         Ymodem::Start();
         return 1;
     }
 
     int OTA(int) {
         CurMode = YmodemWorkMode::OTAUpdate;
-        puts("[BOOT][INFO] LCD-OTA升级模式已启用.");
+        puts("[BOOT][INFO] LCD-OTA升级模式已启用");
         Ymodem::Start();
         return 1;
     }
 
     int END(int) {
-        puts("[BOOT][INFO] 用户终止Ymodem传输.");
+        puts("[BOOT][INFO] 用户终止Ymodem传输");
         Ymodem::End();
         return 1;
     }

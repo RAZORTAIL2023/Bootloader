@@ -78,36 +78,33 @@ bool Ymodem::Callback::GetDataCallback(const uint8_t* pData, size_t len, bool is
 
 void Ymodem::Callback::EndCallback() {
     HAL_UARTEx_ReceiveToIdle_DMA(&PC_huart, saveCmd.data.data(), sizeof(saveCmd.data)-1);
-    puts("[BOOT][INFO] Ymodem结束, 重新打开串口空闲中断.");
-    puts("[BOOT][INFO] 现在打印所有Ymodem传输日志:");
-    Logger::printAll();
 }
 
 void Ymodem::Callback::CpltCallback() {
 
     if (CurMode == YmodemWorkMode::OTAUpdate) {
-        bool result = OTA::update();
-        if (!result) {
-            log("[BOOT][ERROR] OTA更新失败"); Callback::EndCallback();
+        
+        if (!OTA::update()) {
+            log("[BOOT][ERROR] OTA更新失败");
+            Callback::EndCallback();
             return;
         }
 
-        result = OTA::verify();
-        if (!result) {
+        if (!OTA::verify()) {
             log("[BOOT][ERROR] OTA验证失败");
             Callback::EndCallback();
             return;
         }
 
-        result = OTA::unzip();
-        if (!result) {
+        if (!OTA::unzip()) {
             log("[BOOT][ERROR] OTA解压失败");
             Callback::EndCallback();
             return;
         }
+
+        log("[BOOT][INFO] OTA流程结束");
     }
 
-    log("[BOOT][INFO] OTA流程结束");
     Callback::EndCallback();
 }
 
