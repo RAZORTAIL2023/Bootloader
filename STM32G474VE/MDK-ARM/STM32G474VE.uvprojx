@@ -314,7 +314,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>1</Optim>
+            <Optim>4</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32G474xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32G4xx_HAL_Driver/Inc;../Drivers/STM32G4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32G4xx/Include;../Drivers/CMSIS/Include;../../.General;../../.General/Command;../../.General/OTA;../../.General/ymodem;../local</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32G4xx_HAL_Driver/Inc;../Drivers/STM32G4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32G4xx/Include;../Drivers/CMSIS/Include;../../.General;..\..\.local</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -362,7 +362,7 @@
             </VariousControls>
           </Aads>
           <LDads>
-            <umfTarg>0</umfTarg>
+            <umfTarg>1</umfTarg>
             <Ropi>0</Ropi>
             <Rwpi>0</Rwpi>
             <noStLib>0</noStLib>
@@ -782,82 +782,42 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Command</GroupName>
-          <Files>
-            <File>
-              <FileName>Queue.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\.General\Command\Queue.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>Queue.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\.General\Command\Queue.h</FilePath>
-            </File>
-            <File>
-              <FileName>Dispatch.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\.General\Command\Dispatch.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>Execute.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\.General\Command\Execute.h</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>LCD_OTA</GroupName>
-          <Files>
-            <File>
-              <FileName>OTA_HAL.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\.General\OTA\OTA_HAL.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OTA.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\.General\OTA\OTA.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OTA.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\.General\OTA\OTA.h</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Ymodem</GroupName>
-          <Files>
-            <File>
-              <FileName>ymodem_callback.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\.General\Ymodem\ymodem_callback.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>ymodem_hal.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\.General\Ymodem\ymodem_hal.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>ymodem.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\.General\Ymodem\ymodem.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>ymodem.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\.General\Ymodem\ymodem.h</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>General</GroupName>
           <Files>
             <File>
               <FileName>bootloader.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\.General\bootloader.h</FilePath>
+            </File>
+            <File>
+              <FileName>Logger.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\.General\Logger.h</FilePath>
+            </File>
+            <File>
+              <FileName>monotonic_buffer_resource_ex.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\.General\monotonic_buffer_resource_ex.h</FilePath>
+            </File>
+            <File>
+              <FileName>OTA.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\.General\OTA.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>OTA.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\.General\OTA.h</FilePath>
+            </File>
+            <File>
+              <FileName>Queue.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\.General\Queue.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>Queue.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\.General\Queue.h</FilePath>
             </File>
             <File>
               <FileName>task.cpp</FileName>
@@ -870,19 +830,14 @@
               <FilePath>..\..\.General\task.h</FilePath>
             </File>
             <File>
-              <FileName>Logger.cpp</FileName>
+              <FileName>ymodem.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>..\..\.General\Logger.cpp</FilePath>
+              <FilePath>..\..\.General\ymodem.cpp</FilePath>
             </File>
             <File>
-              <FileName>Logger.h</FileName>
+              <FileName>ymodem.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\.General\Logger.h</FilePath>
-            </File>
-            <File>
-              <FileName>monotonic_buffer_resource_ex.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\.General\monotonic_buffer_resource_ex.h</FilePath>
+              <FilePath>..\..\.General\ymodem.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -890,34 +845,54 @@
           <GroupName>Local</GroupName>
           <Files>
             <File>
-              <FileName>Indicator.cpp</FileName>
+              <FileName>Dispatch.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>..\local\Indicator.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>isr.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\local\isr.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>local.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\local\local.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>local.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\local\local.h</FilePath>
-            </File>
-            <File>
-              <FileName>Jump.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\local\Jump.cpp</FilePath>
+              <FilePath>..\..\.local\Dispatch.cpp</FilePath>
             </File>
             <File>
               <FileName>Flash.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>..\local\Flash.cpp</FilePath>
+              <FilePath>..\..\.local\Flash.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>Indicator.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\.local\Indicator.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>isr.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\.local\isr.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>Jump.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\.local\Jump.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>local.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\.local\local.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>local.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\.local\local.h</FilePath>
+            </File>
+            <File>
+              <FileName>OTA_HAL.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\.local\OTA_HAL.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>ymodem_callback.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\.local\ymodem_callback.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>ymodem_hal.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\.local\ymodem_hal.cpp</FilePath>
             </File>
           </Files>
         </Group>

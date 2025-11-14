@@ -4,9 +4,10 @@
 #include <stdio.h>
 #include <functional>
 #include "bootloader.h"
-#include "ymodem.h"
-#include "Queue.h"
 #include "Logger.h"
+#include "OTA.h"
+#include "Queue.h"
+#include "ymodem.h"
 
 namespace Local {
     void Init();
